@@ -1,0 +1,13 @@
+headers.fileextensions  = "*.h *.hpp"
+sources.fileextensions  = "*.cpp *.qml *.qdoc"
+
+outputdir   = html
+
+headerdirs  = .
+
+sourcedirs  = .
+
+exampledirs = .
+
+imagedirs   = ./images
+
