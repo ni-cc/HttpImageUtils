@@ -1,4 +1,19 @@
 /*!
 \page HttpImageUtils-tutorial.html
-\title HttpImageUtils tutorial
+\title How to Make a Mobile App with Felgo HttpImageUtils
+
+\section1 Introduction
+
+Felgo is a tool for fast creation of cross-platform apps and games.
+HttpImagesUtils enhances image uploads by allowing a range of image
+transformations before the upload.
+This tutorial is about making a mobile app with Felgo HttpImageUtils.
+
+\section1 Setup
+
+Felgo can be downloaded and installed from \l {http://felgo.com} .
+After installation, start the IDE, Qt Creator.
+We will start from a template: select \c {File > New File or Project...}
+and the Single-Page Application template.
+\image new-project.png Create new Felgo project from Single-Page Application template
 */
