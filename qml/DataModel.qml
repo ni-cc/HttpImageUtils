@@ -1,3 +1,4 @@
+import Felgo 3.0
 import QtQuick 2.0
 
 Item {
@@ -6,7 +7,7 @@ Item {
     property alias dispatcher: logicConnection.target
 
     // action success signals
-    signal scaledUploaded(var data)
+    signal scaledUploaded(int width, int height)
 
     // action error signals
     signal uploadScaledFailed(var error)
@@ -19,7 +20,12 @@ Item {
         onUploadScaled: {
             api.uploadScaled(url, width, height,
                              function(data) {
-                                 scaledUploaded(data)
+                                 if (data.ok) {
+                                     scaledUploaded(width, height)
+                                 }
+                                 else {
+                                     uploadScaledFailed("HTTP Response " + data.status)
+                                 }
                              },
                              function(error) {
                                  uploadScaledFailed(error)
@@ -31,8 +37,25 @@ Item {
     Item {
         id: api
 
+        // configure request timeout
+        property int maxRequestTimeout: 5000
+
         function uploadScaled(url, width, height, success, error) {
-            error("Not implemented " + width + height)
+            HttpRequest.get(url)
+            .timeout(maxRequestTimeout)
+            .then(function(res) {
+                var reader = HttpImageUtils.createReader(res.body)
+                reader.setScaledSize(width, height, Image.PreserveAspectFit)
+                var scaled = reader.read();
+                HttpRequest.post("http://httpbin.org/post")
+                .timeout(maxRequestTimeout)
+                .attach('jpg', scaled, 'scaled.jpg')
+                .then(function(res) {
+                    success(res)
+                })
+                .catch(function(err) { error(err) });;
+            })
+            .catch(function(err) { error(err) });
         }
     }
 }

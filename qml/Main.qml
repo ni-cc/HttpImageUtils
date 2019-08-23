@@ -23,6 +23,13 @@ App {
         id: dataModel
         dispatcher: logic // data model handles actions sent by logic
 
+        // handle successful upload
+        onScaledUploaded: InputDialog.confirm(app,
+                                              "Uploaded image scaled to " +
+                                              width + " x " + height,
+                                              null,
+                                              false)
+
         // global error handling
         onUploadScaledFailed: nativeUtils.displayMessageBox("Failed to upload", error)
     }
@@ -55,7 +62,7 @@ App {
             // show an image
             Image {
                 id: img
-                source: "../assets/felgo-logo.png"
+                source: "https://dummyimage.com/300"
                 anchors.centerIn: parent
             }
         }
