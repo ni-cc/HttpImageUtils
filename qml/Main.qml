@@ -9,6 +9,14 @@ App {
     //  * Add plugins to monetize, analyze & improve your apps (available with the Pro Licenses)
     //licenseKey: "<generate one from https://felgo.com/licenseKey>"
 
+    // business logic
+    Item {
+        id: logic
+
+        // actions
+        signal uploadScaled(string url)
+    }
+
     NavigationStack {
 
         Page {
