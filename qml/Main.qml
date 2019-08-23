@@ -19,6 +19,12 @@ App {
                 pinch.target: img
                 pinch.minimumScale: 0.1
                 pinch.maximumScale: 3.0
+
+                AppButton {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.bottom
+                    text: qsTr("Upload")
+                }
             }
 
             Image {
