@@ -16,4 +16,38 @@ After installation, start the IDE, Qt Creator.
 We will start from a template: select \c {File > New File or Project...}
 and the Single-Page Application template.
 \image new-project.png Create new Felgo project from Single-Page Application template
+
+\section1 Add to the view
+
+The app now shows an image using \c Image in \c Main.qml.
+By adding a \c PinchArea, it becomes resizeable by a pinch gesture:
+\qml
+    PinchArea {
+        anchors.fill: parent
+        pinch.target: img
+        pinch.minimumScale: 0.1
+        pinch.maximumScale: 3.0
+    }
+\endqml
+\qml
+    Image {
+        id: img
+        source: "../assets/felgo-logo.png"
+        anchors.centerIn: parent
+    }
+\endqml
+\c anchors.fill is set so it covers the whole parent (the page).
+Setting the \c pinch.target to the image id connects the handled pinch
+gestures to the image.
+
+Now we add a button at the bottom to start the upload:
+\qml
+    AppButton {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        text: qsTr("Upload")
+    }
+\endqml
+
+\image basic-ui.png Basic UI
 */
