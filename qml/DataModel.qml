@@ -6,6 +6,9 @@ Item {
     // property to configure target dispatcher / logic
     property alias dispatcher: logicConnection.target
 
+    // whether api is busy (ongoing network requests)
+    readonly property bool isBusy: api.busy
+
     // action success signals
     signal scaledUploaded(int width, int height)
 
@@ -33,12 +36,21 @@ Item {
         }
     }
 
-    // dummy rest api for scaled image upload
+    // small rest api for scaled image upload
     Item {
         id: api
 
+        // loading state
+        readonly property bool busy: HttpNetworkActivityIndicator.enabled
+
         // configure request timeout
         property int maxRequestTimeout: 5000
+
+        // initialization
+        Component.onCompleted: {
+            // immediately activate loading indicator when a request is started
+            HttpNetworkActivityIndicator.setActivationDelay(0)
+        }
 
         function uploadScaled(url, width, height, success, error) {
             HttpRequest.get(url)

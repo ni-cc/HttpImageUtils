@@ -39,6 +39,15 @@ App {
         Page {
             title: qsTr("HttpImageUtils")
 
+            rightBarItem: NavigationBarRow {
+                // network activity indicator
+                ActivityIndicatorBarItem {
+                    enabled: dataModel.isBusy
+                    visible: enabled
+                    showItem: showItemAlways // do not collapse into sub-menu on Android
+                }
+            }
+
             // handle pinch gesture by resizing the image below
             PinchArea {
                 anchors.fill: parent
@@ -51,6 +60,7 @@ App {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.bottom
                     text: qsTr("Upload")
+                    enabled: !dataModel.isBusy
                     onClicked: {
                         logic.uploadScaled(img.source,
                                            img.scale * img.width,
