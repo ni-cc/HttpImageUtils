@@ -15,20 +15,13 @@ App {
         id: logic
 
         // actions
-        signal uploadScaled(string url, int width, int height)
+        signal uploadScaled(int width, int height)
     }
 
     // model
     DataModel {
         id: dataModel
         dispatcher: logic // data model handles actions sent by logic
-
-        // handle successful upload
-        onScaledUploaded: InputDialog.confirm(app,
-                                              "Uploaded image scaled to " +
-                                              width + " x " + height,
-                                              null,
-                                              false)
 
         // global error handling
         onUploadScaledFailed: nativeUtils.displayMessageBox("Failed to upload", error)
@@ -48,6 +41,16 @@ App {
                 }
             }
 
+            // show a message on successful upload
+            Connections {
+                target: dataModel
+                onScaledUploaded: InputDialog.confirm(app,
+                                                      "Uploaded image scaled to " +
+                                                      width + " x " + height,
+                                                      null,
+                                                      false)
+            }
+
             // handle pinch gesture by resizing the image below
             PinchArea {
                 anchors.fill: parent
@@ -62,8 +65,7 @@ App {
                     text: qsTr("Upload")
                     enabled: !dataModel.isBusy
                     onClicked: {
-                        logic.uploadScaled(img.source,
-                                           img.scale * img.width,
+                        logic.uploadScaled(img.scale * img.width,
                                            img.scale * img.height)
                     }
                 }
