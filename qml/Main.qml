@@ -2,6 +2,7 @@ import Felgo 3.0
 import QtQuick 2.0
 
 App {
+    id: app
     // You get free licenseKeys from https://felgo.com/licenseKey
     // With a licenseKey you can:
     //  * Publish your games & apps for the app stores
@@ -14,7 +15,16 @@ App {
         id: logic
 
         // actions
-        signal uploadScaled(string url)
+        signal uploadScaled(string url, int width, int height)
+    }
+
+    // model
+    DataModel {
+        id: dataModel
+        dispatcher: logic // data model handles actions sent by logic
+
+        // global error handling
+        onUploadScaledFailed: nativeUtils.displayMessageBox("Failed to upload", error)
     }
 
     NavigationStack {
@@ -34,6 +44,11 @@ App {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.bottom
                     text: qsTr("Upload")
+                    onClicked: {
+                        logic.uploadScaled(img.source,
+                                           img.scale * img.width,
+                                           img.scale * img.height)
+                    }
                 }
             }
 
