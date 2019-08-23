@@ -12,14 +12,16 @@ App {
     NavigationStack {
 
         Page {
-            title: qsTr("Main Page")
+            title: qsTr("HttpImageUtils")
 
+            // handle pinch gesture by resizing the image below
             PinchArea {
                 anchors.fill: parent
                 pinch.target: img
                 pinch.minimumScale: 0.1
                 pinch.maximumScale: 3.0
 
+                // upload the image
                 AppButton {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.bottom
@@ -27,6 +29,7 @@ App {
                 }
             }
 
+            // show an image
             Image {
                 id: img
                 source: "../assets/felgo-logo.png"
