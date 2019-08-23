@@ -14,7 +14,15 @@ App {
         Page {
             title: qsTr("Main Page")
 
+            PinchArea {
+                anchors.fill: parent
+                pinch.target: img
+                pinch.minimumScale: 0.1
+                pinch.maximumScale: 3.0
+            }
+
             Image {
+                id: img
                 source: "../assets/felgo-logo.png"
                 anchors.centerIn: parent
             }
