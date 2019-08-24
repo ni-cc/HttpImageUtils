@@ -11,3 +11,10 @@ exampledirs = .
 
 imagedirs   = ./images
 
+#Run "qmake -query" to find the path set to QT_INSTALL_DOCS. 
+include($QT_INSTALL_DOCS/global/macros.qdocconf) 
+include($QT_INSTALL_DOCS/global/qt-cpp-defines.qdocconf) 
+include($QT_INSTALL_DOCS/global/compat.qdocconf) 
+include($QT_INSTALL_DOCS/global/fileextensions.qdocconf) 
+include($QT_INSTALL_DOCS/global/qt-html-templates-offline.qdocconf)
+
