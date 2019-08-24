@@ -127,5 +127,50 @@ Item {
     }
 }
 \endqml
-The data model is put in a separate file \c DataModel.qml.
+In order to keep \c Main.qml clean, the data model is put in a separate file
+\c DataModel.qml. In the project tree in Qt Creator, right-click the qml folder
+and select \c {Add new}.
+\image new-file.png Add new data model file
+Then select \c Qt and \c {QML File (Qt Quick 2)} and call it \c DataModel .
+
+Now we can add logic and data model to \c Main.qml and connect them:
+\qml
+    // business logic
+    Item {
+        id: logic
+
+        // actions
+        signal uploadScaled(int width, int height)
+    }
+\endqml
+\qml
+    // model
+    DataModel {
+        id: dataModel
+        dispatcher: logic // data model handles actions sent by logic
+
+        // global error handling
+        onUploadScaledFailed: nativeUtils.displayMessageBox(qsTr("Failed to upload"), error)
+    }
+\endqml
+We can now connect the button handler to the action from the logic
+\qml
+                AppButton {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.bottom
+                    text: qsTr("Upload")
+                    onClicked: {
+                        logic.uploadScaled(img.scale * img.width,
+                                           img.scale * img.height)
+                    }
+                }
+\endqml
+and the image source to the url in the data model.
+\qml
+            Image {
+                id: img
+                source: dataModel.url
+                anchors.centerIn: parent
+            }
+\endqml
 */
