@@ -15,7 +15,7 @@ App {
         id: logic
 
         // actions
-        signal uploadScaled(int width, int height)
+        signal uploadScaledImage(int width, int height)
     }
 
     // model
@@ -24,12 +24,13 @@ App {
         dispatcher: logic // data model handles actions sent by logic
 
         // global error handling
-        onUploadScaledFailed: nativeUtils.displayMessageBox("Failed to upload", error)
+        onUploadScaledImageFailed: nativeUtils.displayMessageBox(qsTr("Failed to upload"), error)
     }
 
     NavigationStack {
 
         Page {
+            // use qsTr for strings you want to translate
             title: qsTr("Pinch to resize")
 
             rightBarItem: NavigationBarRow {
@@ -44,11 +45,13 @@ App {
             // show a message on successful upload
             Connections {
                 target: dataModel
-                onScaledUploaded: InputDialog.confirm(app,
-                                                      "Uploaded image scaled to " +
-                                                      width + " x " + height,
-                                                      null,
-                                                      false)
+                onScaledImageUploaded: {
+                    InputDialog.confirm(app,
+                                        qsTr("Uploaded image scaled to ") +
+                                        width + " x " + height,
+                                        null,
+                                        false)
+                }
             }
 
             // handle pinch gesture by resizing the image below
@@ -65,8 +68,8 @@ App {
                     text: qsTr("Upload")
                     enabled: !dataModel.isBusy
                     onClicked: {
-                        logic.uploadScaled(img.scale * img.width,
-                                           img.scale * img.height)
+                        logic.uploadScaledImage(img.scale * img.width,
+                                                img.scale * img.height)
                     }
                 }
             }

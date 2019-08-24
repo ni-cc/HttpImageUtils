@@ -13,34 +13,35 @@ Item {
     readonly property alias url: _.url
 
     // action success signals
-    signal scaledUploaded(int width, int height)
+    signal scaledImageUploaded(int width, int height)
 
     // action error signals
-    signal uploadScaledFailed(var error)
+    signal uploadScaledImageFailed(var error)
 
     // listen to actions from dispatcher
     Connections {
         id: logicConnection
 
         // action 1 - upload scaled image
-        onUploadScaled: {
-            api.uploadScaled(url, width, height,
-                             function(data) {
-                                 if (data.ok) {
-                                     _.url = _.makeURL()
-                                     scaledUploaded(width, height)
-                                 }
-                                 else {
-                                     uploadScaledFailed("HTTP Response " + data.status)
-                                 }
-                             },
-                             function(error) {
-                                 uploadScaledFailed(error)
-                             })
+        onUploadScaledImage: {
+            api.uploadScaledImage(url, width, height,
+                                  function(data) {
+                                      if (data.ok) {
+                                          _.url = _.makeURL()
+                                          scaledImageUploaded(width, height)
+                                      }
+                                      else {
+                                          uploadScaledImageFailed("HTTP Response " +
+                                                                  data.status)
+                                      }
+                                  },
+                                  function(error) {
+                                      uploadScaledImageFailed(error)
+                                  })
         }
     }
 
-    // small rest api for scaled image upload
+    // small api for scaled image upload
     Item {
         id: api
 
@@ -56,13 +57,17 @@ Item {
             HttpNetworkActivityIndicator.setActivationDelay(0)
         }
 
-        function uploadScaled(url, width, height, success, error) {
+        // scale and upload an image
+        function uploadScaledImage(url, width, height, success, error) {
+            // download the image
             HttpRequest.get(url)
             .timeout(maxRequestTimeout)
             .then(function(res) {
+                // scale the image
                 var reader = HttpImageUtils.createReader(res.body)
                 reader.setScaledSize(width, height, Image.PreserveAspectFit)
                 var scaled = reader.read();
+                //upload the scaled image
                 HttpRequest.post("http://httpbin.org/post")
                 .timeout(maxRequestTimeout)
                 .attach('jpg', scaled, 'scaled.jpg')
