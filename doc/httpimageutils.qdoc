@@ -1,5 +1,5 @@
 /*!
-\page HttpImageUtils-tutorial.html
+\page HttpImageUtils-tutorial.html tutorial
 \title How to Make a Mobile App with Felgo HttpImageUtils
 
 \section1 Introduction
@@ -13,14 +13,14 @@ This tutorial is about making a mobile app with Felgo HttpImageUtils.
 
 Felgo can be downloaded and installed from \l https://felgo.com .
 After installation, start the IDE, Qt Creator.
-We will start from a template: select \c {File > New File or Project...}
+We will start from a template: select \uicontrol {File > New File or Project...}
 and the Single-Page Application template.
 \image new-project.png Create new Felgo project from Single-Page Application template
 
 \section1 Add to the view
 
-The app now shows an image using \uicontrol Image in \c Main.qml.
-By adding a \uicontrol PinchArea, it becomes resizeable by a pinch gesture:
+The app now shows an image using \c Image in \c Main.qml.
+By adding a \c PinchArea, it becomes resizeable by a pinch gesture:
 \qml
     PinchArea {
         anchors.fill: parent
@@ -36,11 +36,11 @@ By adding a \uicontrol PinchArea, it becomes resizeable by a pinch gesture:
         anchors.centerIn: parent
     }
 \endqml
-\c anchors.fill is set so it covers the whole parent (the page).
-Setting the \c pinch.target to the image id connects the handled pinch
-gestures to the image.
+\c anchors.fill is set so it covers the whole parent (the \c Page ).
+By setting the \c pinch.target to the \c Image id, the handled pinch
+gestures resize the \c Image.
 
-Now we add a button at the bottom to start the upload:
+Now we add a \c AppButton at the bottom as an upload button:
 \qml
     AppButton {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -65,11 +65,12 @@ image should be uploaded:
 \endqml
 
 The data model manages the data, which will be the path or url of the image.
-It is defined in a private sub-item in order to make it only readable
+The url is defined in a private sub-item in order to make it only readable
 to the outside. We'll use a dummy URL for an image for illustration.
-It will also communicate with an \c api to scale and upload the image,
+
+The data model will also communicate with an \c api to scale and upload the image,
 which we will explain in the next section.
-To handle the action from the logic, we add a \c Connections component.
+To handle the action from the logic, we add a \c Connections component:
 \qml
 import Felgo 3.0
 import QtQuick 2.0
@@ -127,13 +128,13 @@ Item {
     }
 }
 \endqml
-In order to keep \c Main.qml clean, the data model is put in a separate file
+In order to keep \c Main.qml clean, the data model is put in a newly created separate file
 \c DataModel.qml. In the project tree in Qt Creator, right-click the qml folder
-and select \c {Add new}.
+and select \uicontrol {Add new}.
 \image new-file.png Add new data model file
-Then select \c Qt and \c {QML File (Qt Quick 2)} and call it \c DataModel .
+Then select \uicontrol Qt and \uicontrol {QML File (Qt Quick 2)} and call it \c DataModel .
 
-Now we can add logic and data model to \c Main.qml and connect them:
+Next, we can add the logic and data model to \c Main.qml and connect them:
 \qml
     // business logic
     Item {
@@ -208,7 +209,7 @@ We now add the code to scale and upload the image:
         }
     }
 \endqml
-The function \c uploadScaled takes as argument the original \c url of the image,
+The function \c uploadScaled() takes as argument the original \c url of the image,
 the \c width and \c height to scale it to, and callback functions for success
 and error.
 
@@ -220,7 +221,7 @@ Finally, the scaled image is uploaded to \l http://httpbin.org using
 In addition, a timeout is set, and errors are caught and given to \c error() .
 
 We can now show a message on successful upload. For this we connect the success
-signal of \uicontrol DataModel to a handler in the \uicontrol Page in \c Main.qml .
+signal of \c DataModel to a handler in the \c Page in \c Main.qml .
 \qml
             // show a message on successful upload
             Connections {
@@ -291,8 +292,8 @@ A new random image URL is generated using the private data model function
 
 We also added the property \c isBusy which uses
 \c HttpNetworkActivityIndicator to indicate ongoing network requests.
-Now we'll add a network activity indicator to the \uicontrol Page in \c Main.qml
-in order to show when the upload is in progress:
+Now we'll add a network activity indicator to the right of the navigation bar in
+\c Page in \c Main.qml. It shows when the upload is in progress:
 \qml
         Page {
             //...
@@ -309,4 +310,15 @@ in order to show when the upload is in progress:
 \endqml
 
 \image better-ui.png Added image change and network activity indicator
+
+\section1 More
+
+That's it! You can now for example build the app at
+\l https://felgo.com/cloud-builds .
+
+The full source code of the app is at \l https://github.com/ni-cc/HttpImageUtils .
+
+\sa https://felgo.com/doc, https://felgo.com/doc/apps-getting-started/ ,
+https://felgo.com/doc/apps-howto-access-rest-service/ ,
+https://felgo.com/doc/felgo-httpimageutils/
 */
