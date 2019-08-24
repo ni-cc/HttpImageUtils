@@ -48,6 +48,84 @@ Now we add a button at the bottom to start the upload:
         text: qsTr("Upload")
     }
 \endqml
-
 \image basic-ui.png Basic UI
+
+\section1 Add logic and data model
+
+For separation of concerns, we add the application logic and data model
+separately. The logic is just a single action to signal that a scaled
+image should be uploaded:
+\qml
+    Item {
+        id: logic
+
+        // actions
+        signal uploadScaled(int width, int height)
+    }
+\endqml
+
+The data model manages the data, which will be the path or url of the image.
+It is defined in a private sub-item in order to make it only readable
+to the outside.
+It will also communicate with an \c api to scale and upload the image,
+which we will explain later.
+To handle the action from the logic, we add a \c Connections component.
+\qml
+import Felgo 3.0
+import QtQuick 2.0
+
+Item {
+
+    // property to configure target dispatcher / logic
+    property alias dispatcher: logicConnection.target
+
+    // model data properties
+    readonly property alias url: _url
+
+    // action success signals
+    signal scaledUploaded(int width, int height)
+
+    // action error signals
+    signal uploadScaledFailed(var error)
+
+    // listen to actions from dispatcher
+    Connections {
+        id: logicConnection
+
+        // action 1 - upload scaled image
+        onUploadScaled: {
+            api.uploadScaled(url, width, height,
+                             function(data) {
+                                 if (data.ok) {
+                                     scaledUploaded(width, height)
+                                 }
+                                 else {
+                                     uploadScaledFailed("HTTP Response " + data.status)
+                                 }
+                             },
+                             function(error) {
+                                 uploadScaledFailed(error)
+                             })
+        }
+    }
+
+    // dummy rest api for scaled image upload
+    Item {
+        id: api
+
+        // scale and upload an image
+        function uploadScaled(url, width, height, success, error) {
+        }
+    }
+
+    // private
+    Item {
+        id: _
+
+        // data properties
+        property string url: "https://dummyimage.com/300" // image url
+    }
+}
+\endqml
+The data model is put in a separate file \c DataModel.qml.
 */
