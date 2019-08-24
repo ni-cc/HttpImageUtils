@@ -11,7 +11,7 @@ This tutorial is about making a mobile app with Felgo HttpImageUtils.
 
 \section1 Setup
 
-Felgo can be downloaded and installed from \l {http://felgo.com} .
+Felgo can be downloaded and installed from \l https://felgo.com .
 After installation, start the IDE, Qt Creator.
 We will start from a template: select \c {File > New File or Project...}
 and the Single-Page Application template.
@@ -19,8 +19,8 @@ and the Single-Page Application template.
 
 \section1 Add to the view
 
-The app now shows an image using \c Image in \c Main.qml.
-By adding a \c PinchArea, it becomes resizeable by a pinch gesture:
+The app now shows an image using \uicontrol Image in \c Main.qml.
+By adding a \uicontrol PinchArea, it becomes resizeable by a pinch gesture:
 \qml
     PinchArea {
         anchors.fill: parent
@@ -66,9 +66,9 @@ image should be uploaded:
 
 The data model manages the data, which will be the path or url of the image.
 It is defined in a private sub-item in order to make it only readable
-to the outside.
+to the outside. We'll use a dummy URL for an image for illustration.
 It will also communicate with an \c api to scale and upload the image,
-which we will explain later.
+which we will explain in the next section.
 To handle the action from the logic, we add a \c Connections component.
 \qml
 import Felgo 3.0
@@ -109,7 +109,7 @@ Item {
         }
     }
 
-    // dummy rest api for scaled image upload
+    // dummy api for scaled image upload
     Item {
         id: api
 
@@ -173,4 +173,64 @@ and the image source to the url in the data model.
                 anchors.centerIn: parent
             }
 \endqml
+
+\section1 Scale and upload the image using HttpImageUtils and HttpRequest
+
+We now add the code to scale and upload the image:
+\qml
+    // small api for scaled image upload
+    Item {
+        id: api
+
+        // configure request timeout
+        property int maxRequestTimeout: 5000
+
+        // scale and upload an image
+        function uploadScaled(url, width, height, success, error) {
+            // download the image
+            HttpRequest.get(url)
+            .timeout(maxRequestTimeout)
+            .then(function(res) {
+                // scale the image
+                var reader = HttpImageUtils.createReader(res.body)
+                reader.setScaledSize(width, height, Image.PreserveAspectFit)
+                var scaled = reader.read();
+                //upload the scaled image
+                HttpRequest.post("http://httpbin.org/post")
+                .timeout(maxRequestTimeout)
+                .attach('jpg', scaled, 'scaled.jpg')
+                .then(function(res) {
+                    success(res)
+                })
+                .catch(function(err) { error(err) });;
+            })
+            .catch(function(err) { error(err) });
+        }
+    }
+\endqml
+The function \c uploadScaled takes as argument the original \c url of the image,
+the \c width and \c height to scale it to, and callback functions for success
+and error.
+
+First it downloads the image using \c HttpRequest.get() . Then the response is
+read using \c HttpImageUtils.reader() and scaled using \c setScaledSize() .
+
+Finally, the scaled image is uploaded to \l http://httpbin.org using
+\c HttpRequest.post() . The response is given to \c success() .
+In addition, a timeout is set, and errors are caught and given to \c error() .
+
+We can now show a message on successful upload. For this we connect the success
+signal of \uicontrol DataModel to a handler in \uicontrol Page in \c Main.qml .
+\qml
+            // show a message on successful upload
+            Connections {
+                target: dataModel
+                onScaledUploaded: InputDialog.confirm(app,
+                                                      qsTr("Uploaded image scaled to ") +
+                                                      width + " x " + height,
+                                                      null,
+                                                      false)
+            }
+\endqml
+\image message.png Successful scaling and upload
 */
