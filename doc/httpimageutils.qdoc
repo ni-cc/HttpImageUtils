@@ -220,7 +220,7 @@ Finally, the scaled image is uploaded to \l http://httpbin.org using
 In addition, a timeout is set, and errors are caught and given to \c error() .
 
 We can now show a message on successful upload. For this we connect the success
-signal of \uicontrol DataModel to a handler in \uicontrol Page in \c Main.qml .
+signal of \uicontrol DataModel to a handler in the \uicontrol Page in \c Main.qml .
 \qml
             // show a message on successful upload
             Connections {
@@ -233,4 +233,80 @@ signal of \uicontrol DataModel to a handler in \uicontrol Page in \c Main.qml .
             }
 \endqml
 \image message.png Successful scaling and upload
+
+\section1 Add a network activity indicator and change image after each upload
+
+Now we'll improve the UI of the app. First we'll change the image after each
+upload in \c DataModel.qml :
+\qml
+Item {
+    //...
+    // whether api is busy (ongoing network requests)
+    readonly property bool isBusy: HttpNetworkActivityIndicator.enabled
+
+    // listen to actions from dispatcher
+    Connections {
+        id: logicConnection
+
+        // action 1 - upload scaled image
+        onUploadScaled: {
+            api.uploadScaled(url, width, height,
+                             function(data) {
+                                 if (data.ok) {
+                                     _.url = _.makeURL()
+                                     scaledUploaded(width, height)
+                                 }
+                                 else {
+                                     uploadScaledFailed("HTTP Response " + data.status)
+                                 }
+                             },
+                             function(error) {
+                                 uploadScaledFailed(error)
+                             })
+        }
+    }
+    //...
+}
+\endqml
+\qml
+    // private
+    Item {
+        id: _
+
+        // data properties
+        property string url: makeURL()  // image url
+
+        // generate a random image URL
+        function makeURL() {
+            return ("https://dummyimage.com/" +
+                    utils.generateRandomValueBetween(100, 500) + "x" +
+                    utils.generateRandomValueBetween(100, 500) + "/" +
+                    utils.randomColor().substr(1) +
+                    "&text=Hi!")
+        }
+    }
+\endqml
+A new random image URL is generated using the private data model function
+\c makeURL() after a successful upload.
+
+We also added the property \c isBusy which uses
+\c HttpNetworkActivityIndicator to indicate ongoing network requests.
+Now we'll add a network activity indicator to the \uicontrol Page in \c Main.qml
+in order to show when the upload is in progress:
+\qml
+        Page {
+            //...
+            rightBarItem: NavigationBarRow {
+                // network activity indicator
+                ActivityIndicatorBarItem {
+                    enabled: dataModel.isBusy
+                    visible: enabled
+                    showItem: showItemAlways // do not collapse into sub-menu on Android
+                }
+            }
+            //...
+        }
+\endqml
+
+\image better-ui.png Added image change and network activity indicator
 */
