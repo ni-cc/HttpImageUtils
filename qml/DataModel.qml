@@ -9,6 +9,9 @@ Item {
     // whether api is busy (ongoing network requests)
     readonly property bool isBusy: api.busy
 
+    // model data properties
+    readonly property alias url: _.url
+
     // action success signals
     signal scaledUploaded(int width, int height)
 
@@ -24,6 +27,7 @@ Item {
             api.uploadScaled(url, width, height,
                              function(data) {
                                  if (data.ok) {
+                                     _.url = _.makeURL()
                                      scaledUploaded(width, height)
                                  }
                                  else {
@@ -68,6 +72,23 @@ Item {
                 .catch(function(err) { error(err) });;
             })
             .catch(function(err) { error(err) });
+        }
+    }
+
+    // private
+    Item {
+        id: _
+
+        // data properties
+        property string url: makeURL()  // image url
+
+        // generate a random image URL
+        function makeURL() {
+            return ("https://dummyimage.com/" +
+                    utils.generateRandomValueBetween(100, 500) + "x" +
+                    utils.generateRandomValueBetween(100, 500) + "/" +
+                    utils.randomColor().substr(1) +
+                    "&text=Hi!")
         }
     }
 }

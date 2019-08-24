@@ -30,7 +30,7 @@ App {
     NavigationStack {
 
         Page {
-            title: qsTr("HttpImageUtils")
+            title: qsTr("Pinch to resize")
 
             rightBarItem: NavigationBarRow {
                 // network activity indicator
@@ -74,7 +74,7 @@ App {
             // show an image
             Image {
                 id: img
-                source: "https://dummyimage.com/300"
+                source: dataModel.url
                 anchors.centerIn: parent
             }
         }
