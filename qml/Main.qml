@@ -51,6 +51,7 @@ App {
                                         width + " x " + height,
                                         null,
                                         false)
+                    img.scale = 1.0
                 }
             }
 
